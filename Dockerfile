@@ -12,6 +12,7 @@ RUN apk add --no-cache \
     curl \
     bash \
     tzdata \
+    npm \
     apache2 && \
     sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd && \
     mkdir -p /etc/supervisor.d/ && \
@@ -45,7 +46,13 @@ RUN apk add --no-cache \
     php7-pdo_sqlite \
     php7-tokenizer \
     php7-pecl-redis && \
-    ln -sf /dev/stdout /var/log/apache2/access.log && \
+    rm /var/www/localhost/htdocs/index.html
+
+COPY laravel /var/www/localhost/htdocs/
+COPY /config/server/supervisord.ini /etc/supervisor.d/supervisord.ini
+COPY /config/server/httpd.conf /etc/apache2/httpd.conf
+
+RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
     ln -sf /dev/stderr /var/log/apache2/error.log && \
     cd /var/www/localhost/htdocs/ && \
     composer install --no-dev && \
@@ -53,12 +60,9 @@ RUN apk add --no-cache \
     mkdir -p /var/www/localhost/htdocs/storage/bootstrap/cache && \
     chmod -R 777 /var/www/localhost/htdocs/storage/bootstrap/cache && \
     chown -R apache:apache /var/www/localhost/htdocs && \
-    rm /var/www/localhost/htdocs/index.html && \
-    httpd -k stop && rm /etc/apache2/httpd.conf
+    httpd -k stop
 
-COPY laravel /var/www/localhost/htdocs/
-COPY /config/server/supervisord.ini /etc/supervisor.d/supervisord.ini
-COPY /config/server/httpd.conf /etc/apache2/httpd.conf
+
 
 WORKDIR /var/www/localhost/htdocs/
 
