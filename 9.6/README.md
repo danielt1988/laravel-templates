@@ -1,1 +1,1 @@
-Laravel v9.6 Template
+# Laravel v9.6 Template
