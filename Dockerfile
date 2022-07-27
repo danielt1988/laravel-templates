@@ -61,7 +61,8 @@ RUN cd /var/www/localhost/htdocs/ && composer install --no-dev && \
     npm install && \
     npm run production && \
     rm /var/www/localhost/htdocs/index.html && \
-    httpd -k stop
+    httpd -k stop && \
+    mv /usr/bin/php8 /usr/bin/php
 
 
 WORKDIR /var/www/localhost/htdocs/
